@@ -15,4 +15,4 @@ login dialog box, enter the assigned HUAWEI CLOUD lab account and password to lo
 HUAWEI CLOUD
 
 
-[Cloud-Labs/Lab 1/image](Huaweilogin.PNG)
+[Cloud-Labs/Lab 1](Huaweilogin.PNG)
