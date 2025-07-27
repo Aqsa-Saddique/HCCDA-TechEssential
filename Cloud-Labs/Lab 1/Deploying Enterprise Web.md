@@ -13,3 +13,4 @@ Select IAM User Login.
 In the 
 login dialog box, enter the assigned HUAWEI CLOUD lab account and password to log in to 
 HUAWEI CLOUD
+Cloud-Labs/Lab 1/image/Huaweilogin.PNG
