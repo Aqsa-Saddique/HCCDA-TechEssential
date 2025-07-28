@@ -1,18 +1,52 @@
-## LAB : Deploying an Enterprise Web
-An enterprise intends to deploy their website on HUAWEI CLOUD and they have the 
-following requirements:
+# LAB 1: Deploying an Enterprise Web
+Full WordPress Site Deployment with LAMP, RDS, ELB, Auto Scaling, and Monitoring
 
-1.Database nodes and service nodes are deployed on separate ECSs.
+This project demonstrates how to deploy a highly available and scalable WordPress website on Huawei Cloud infrastructure. The setup includes ECS for compute, RDS for database, LAMP stack for serving web content, Elastic Load Balancer for traffic distribution, and Auto Scaling for elasticity, following enterprise architecture standards.
 
-2.ECSs are added or removed as incoming traffic changes over time.
-
-## Prerequisites:
-Log in to HUAWEI CLOUD.Go to the [Lab Desktop] and open the Google 
-Chrome browser to access the HUAWEI CLOUD login page. 
-Select IAM User Login. 
-In the 
-login dialog box, enter the assigned HUAWEI CLOUD lab account and password to log in to 
-HUAWEI CLOUD
+# Technologies Used
+**Cloud Services:** 
+Huawei Cloud ECS, RDS, VPC, ELB, AS, IMS, Cloud Eye
 
 
-[Cloud-Labs/Lab 1](Huaweilogin.PNG)
+**Web Stack:**
+Linux, Apache, MySQL, PHP (LAMP)
+
+**App:**
+WordPress 4.9.10
+
+**OS:** 
+CentOS 7.6 (64-bit)
+
+**Region:**
+AP-Singapore
+
+# Deployment Steps
+
+**Cloud Login & Region Setup**
+
+1. Logged into Huawei Cloud IAM user portal using lab credentials.
+2. Set region to AP-Singapore for all services
+
+<img width="643" height="332" alt="Login To huaweiCloud" src="https://github.com/user-attachments/assets/ec80363e-94b3-49ec-9678-d278fb39d174" />
+
+**VPC and Network Configuration**
+
+**Created a Virtual Private Cloud (VPC):**
+
+1. Default CIDR and settings.
+2. Named vpc-mp
+ 
+**Created a Security Group:**
+
+1. Added inbound rule allowing all traffic (0.0.0.0/0) for all protocols/ports
+
+
+ 
+
+
+
+
+   
+
+
+
