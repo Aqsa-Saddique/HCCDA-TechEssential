@@ -1,252 +1,95 @@
 # LAB 1: Deploying an Enterprise Web
-Full WordPress Site Deployment with LAMP, RDS, ELB, Auto Scaling, and Monitoring
+## Introduction
+In the modern digital era, enterprises demand scalable, secure, and highly available infrastructure to support business-critical applications. Cloud platforms, such as Huawei Cloud, provide the tools and flexibility to build such environments efficiently. This lab demonstrates the end-to-end deployment of an enterprise-grade website using Huawei Cloud’s core services — Elastic Cloud Server (ECS), Relational Database Service (RDS), Elastic Load Balancer (ELB), and Auto Scaling (AS). The architecture is based on a distributed model, isolating web and database workloads to improve performance, manageability, and fault tolerance.
 
-This project demonstrates how to deploy a highly available and scalable WordPress website on Huawei Cloud infrastructure. The setup includes ECS for compute, RDS for database, LAMP stack for serving web content, Elastic Load Balancer for traffic distribution, and Auto Scaling for elasticity, following enterprise architecture standards.
+# 1. Establishing the Cloud Network Environment
+Before provisioning compute or storage services, it is essential to establish a secure and isolated network environment. Huawei Cloud provides the Virtual Private Cloud (VPC) service, allowing users to define IP ranges, subnets, and traffic routing policies. Alongside this, Security Groups are configured to control access to resources, functioning as virtual firewalls.
 
-# Technologies Used
-**Cloud Services:** 
-Huawei Cloud ECS, RDS, VPC, ELB, AS, IMS, Cloud Eye
+## 1.1 Deploying a Virtual Private Cloud (VPC)
+A VPC was deployed in the AP-Singapore region to serve as the foundation for all subsequent resources. The creation process automatically generated an associated subnet, enabling internal communication and routing within the cloud infrastructure.
 
+## 1.2 Defining Security Group Rules
+A custom Security Group was configured with an inbound rule allowing full access from IP range 0.0.0.0/0. This open configuration is suitable for testing and demonstration purposes but should be restricted to specific IPs in production for enhanced security.
 
-**Web Stack:**
-Linux, Apache, MySQL, PHP (LAMP)
 
-**App:**
-WordPress 4.9.10
 
-**OS:** 
-CentOS 7.6 (64-bit)
+# 2. Provisioning Compute and Database Services
+With the network environment in place, the next step involves provisioning compute and database resources. Huawei Cloud’s ECS service is used to deploy a Linux-based web server, while the RDS service is used to provision a highly available, managed MySQL database instance. Both components are assigned to the previously configured VPC for seamless communication.
 
-**Region:**
-AP-Singapore
+## 2.1 Launching an ECS Instance for Web Hosting
+An ECS instance was provisioned to host the website's application layer. Configuration parameters included:
 
-# Deployment Steps
+Billing Mode: Pay-per-use
 
-**Cloud Login & Region Setup**
+Operating System: CentOS 7.6 (64-bit)
 
-1. Logged into Huawei Cloud IAM user portal using lab credentials.
-2. Set region to AP-Singapore for all services
+Instance Type: 1 vCPU, 1 GB RAM
 
-<img width="643" height="332" alt="Login To huaweiCloud" src="https://github.com/user-attachments/assets/ec80363e-94b3-49ec-9678-d278fb39d174" />
+Login Method: Password authentication
 
-**VPC and Network Configuration**
+Network: VPC-integrated with associated security group
 
-**Created a Virtual Private Cloud (VPC):**
+Elastic IP (EIP): Automatically allocated
 
-1. Default CIDR and settings.
-2. Named vpc-mp
+This instance serves as the primary web node for hosting the LAMP stack and WordPress.
 
-<img width="567" height="115" alt="Created VPC" src="https://github.com/user-attachments/assets/34519998-b8d0-42f1-a310-e4e1e308e373" />
+## 2.2 Provisioning the RDS Instance for Data Management
+A managed MySQL RDS instance was deployed to serve as the backend database. Key configurations included:
 
+Instance Type: 2 vCPU, 4 GB RAM
 
- 
-**Created a Security Group:**
+Storage: Cloud SSD
 
-1. Added inbound rule allowing all traffic (0.0.0.0/0) for all protocols/ports
+Deployment Mode: Primary/Standby for high availability
 
-# ECS (Elastic Cloud Server) Setup
-**Launched a new ECS with:**
+Network Integration: Same VPC and security group as ECS
 
-Billing: Pay-per-use
+This architecture ensures secure, high-speed communication between the web and database layers.
 
-CPU: 1 vCPU, RAM: 1 GB
+# 3. Installing and Configuring the Web Application
+This phase involves preparing the application environment by installing the required LAMP stack components on the ECS, creating the WordPress database in RDS, and completing the WordPress installation through the web interface.
 
-OS: CentOS 7.6 64-bit
+## 3.1 Setting Up the LAMP Stack
+The following packages were installed via yum:
 
-System Disk: 40 GB High I/O
+**yum install -y httpd php php-fpm php-mysql mysql**
 
-EIP: Dynamic BGP (2 Mbit/s)
+The Apache configuration file (httpd.conf) was modified to define the server name, and the latest WordPress package was downloaded, extracted to /var/www/html/, and given appropriate permissions. 
 
-Login: Username root, password-based
+Services httpd and php-fpm were started and configured to auto-start on boot.
 
-Connected ECS to created VPC and Security Group.
+## 3.2 Creating a Dedicated WordPress Database
+A new MySQL database named wordpress was created using the RDS web-based console. SQL query used:
 
-<img width="720" height="351" alt="image" src="https://github.com/user-attachments/assets/34c0dabf-34fd-4a01-98b3-4c901597560b" />
+CREATE DATABASE wordpress;
+This database acts as the data store for the WordPress application.
 
-<img width="720" height="54" alt="image" src="https://github.com/user-attachments/assets/fcdd23e0-6e4a-49c9-8626-49414281e18d" />
+## 3.3 Running the WordPress Installation Wizard
+The WordPress installer was accessed by entering the ECS’s public EIP in a browser. Required database connection details were filled in using the RDS floating IP, username, and password. The setup was completed by defining site name, admin user credentials, and email.
 
+# 4. Enabling High Availability and Scalability
+To ensure enterprise-grade reliability, Huawei Cloud’s Load Balancer and Auto Scaling services were integrated. These features allow the infrastructure to handle varying traffic loads and minimize service interruptions due to server failure.
 
-# RDS (Relational Database Service) Setup
+## 4.1 Deploying an Elastic Load Balancer (ELB)
+An ELB of type Shared/Public was deployed and attached to the existing VPC. A listener was configured on port 80 to forward HTTP traffic to the ECS instance. Health checks were manually disabled for simplicity, but in production, they are crucial for automatic fault detection and rerouting.
 
-Purchased a MySQL 8.0 Primary/Standby RDS instance with:
+## 4.2 Creating a Custom ECS System Image
+To enable scaling, a system disk image of the configured ECS was created using the Image Management Service. This image captures all installed packages, configurations, and WordPress files, ensuring consistency across any new instances launched by the Auto Scaling group.
 
-1. 2 vCPUs, 4 GB RAM
+## 4.3 Setting Up Auto Scaling Policies
+An Auto Scaling group was created using the ECS image. The group was linked to the ELB and configured with two CPU-based policies:
 
-2. Cloud SSD storage
+Scale-Out Policy: Add one instance when CPU usage ≥ 60%
 
-3. VPC and security group assigned
+Scale-In Policy: Remove one instance when CPU usage ≤ 20%
 
-4. Password set for root user
+The configuration was validated by observing the automatic provisioning of additional ECS instances in response to simulated CPU load.
 
-Waited 6–10 minutes for RDS creation.
+# 5. Verifying Deployment and Monitoring Performance
+In the final phase, we tested the availability of the deployed application and monitored resource usage using Huawei Cloud’s built-in observability tools.
 
-Retrieved floating IP address of the database
+## 5.1 Accessing the WordPress Site via ELB
+The WordPress homepage was accessed using the public IP of the ELB. Successful page load and dashboard login confirmed the proper integration of ECS, RDS, and ELB. Load balancing functionality was verified by ensuring that requests reached backend ECS instances as expected.
 
-<img width="720" height="489" alt="image" src="https://github.com/user-attachments/assets/cf7d90af-24d3-4baa-b1e6-fbc2ec27331d" />
-
-<img width="720" height="185" alt="image" src="https://github.com/user-attachments/assets/fcd6dbb2-cf9a-4583-b1ab-3e050e75b760" />
-
-<img width="720" height="822" alt="image" src="https://github.com/user-attachments/assets/88a6a5d8-a99b-414e-a4d9-99f049b0d19d" />
-
-<img width="720" height="391" alt="image" src="https://github.com/user-attachments/assets/0a9140da-739b-453f-85a1-2ecaeed0625d" />
-
-# Setting Up the Linux, Apache, MySQL, PHP (LAMP) Environment
-
-Connected to ECS via Remote Login (VNC).
-
-Go back to the ECS console and click Remote Login in the Operation column of the purchased ECS.
-
-In the VNC window, enter the username (root for Linux ECSs by default) and password for login.
-
-<img width="720" height="130" alt="image" src="https://github.com/user-attachments/assets/a39f5bc3-4b5e-4650-86c1-e2d52156c58d" />
-
-**Run the following command to install LAMP and enable the services you will need:**
-
-*yum install -y httpd php php-fpm php-mysql mysql*
-
-**Edited Apache config:**
-
-*vim /etc/httpd/conf/httpd.conf*
-
-# Added: ServerName localhost:80
-Enabled and started required services:
-
-
-systemctl start httpd
-
-systemctl enable httpd
-
-systemctl start php-fpm
-
-systemctl enable php-fpm
-
-<img width="720" height="137" alt="image" src="https://github.com/user-attachments/assets/0538e743-419f-4731-8a14-6c1cb826c17c" />
-
-<img width="720" height="189" alt="image" src="https://github.com/user-attachments/assets/4969e008-aeec-46fc-ba02-4d444c6fc4b8" />
-
-# WordPress Installation and Setup
-
-**Downloaded and extracted WordPress:**
-
-wget -c https://koolabsfiles.obs.ap-southeast-3.myhuaweicloud.com:443/20220731/wordpress-4.9.10.tar.gz
-tar -zxvf wordpress-4.9.10.tar.gz -C /var/www/html
-chmod -R 777 /var/www/html
-
-**Accessed WordPress setup via browser:**
-
-http://<ECS_EIP>/wordpress/
-
-**In RDS Console:**
-
-Logged into the DB using the GUI.
-
-**Ran SQL query:**
-
-*CREATE DATABASE wordpress;*
-
-**In WordPress setup:**
-
-DB Name: wordpress
-
-DB User: root
-
-DB Password: (your RDS password)
-
-DB Host: (floating IP of RDS)
-
-Finalized WordPress site title, admin user, password, and email.
-
-<img width="720" height="314" alt="image" src="https://github.com/user-attachments/assets/5914a523-31d0-4f25-baa8-4a2d69a77fba" />
-
-<img width="722" height="734" alt="image" src="https://github.com/user-attachments/assets/e704eb2e-44fd-4e10-925c-2e9f6a3b2b91" />
-
-<img width="628" height="558" alt="image" src="https://github.com/user-attachments/assets/d446cb5b-4f26-4bf0-8e71-30885c723980" />
-
-# Load Balancer (ELB) Configuration
-
-**Created a Shared ELB with:**
-
-Public EIP, HTTP listener on port 80
-
-Backend server group linked to ECS
-
-Health Check: Disabled for demo purpose
-
-<img width="720" height="134" alt="image" src="https://github.com/user-attachments/assets/fff386d8-fca9-4dfd-a370-91e0a13d22e7" />
-
-<img width="720" height="413" alt="image" src="https://github.com/user-attachments/assets/0fa69c39-e91d-4f0a-88ad-40ff21cfa1a9" />
-
-  <img width="720" height="531" alt="image" src="https://github.com/user-attachments/assets/cb19b5c6-65bc-4a80-bd97-baaf4f0f452a" />
- 
-# Creating an ECS Image (IMS)
-
-Stopped the existing ECS instance.
-
-Created a System Disk Image (ims-mp) using Image Management Service (IMS).
-
-Restarted ECS after image status changed to Normal.
-
-<img width="720" height="550" alt="image" src="https://github.com/user-attachments/assets/bb9c8bca-0fb0-4569-b714-ecdf0cd9544b" />
-
-# Auto Scaling (AS) Configuration
-**Created an AS Configuration:**
-
-Used ECS image
-
-No EIP (used behind ELB)
-
-Same security group
-
-**Created an AS Group:**
-
-Attached ELB created earlier
-
-Allowed dynamic scaling
-
-**Configured Scaling Policies:**
-
-Scale out: If CPU ≥ 60%, add 1 ECS
-
-Scale in: If CPU ≤ 20%, remove 1 ECS
-
-**Verified scaling:**
-
-2 ECS instances were added dynamically to backend group.
-
-<img width="722" height="566" alt="image" src="https://github.com/user-attachments/assets/bd4ba30f-d01a-4a22-9d05-dc8f3a66dda3" />
-
-3 Final Testing
-Visited: http://<LoadBalancer_EIP>/wordpress/
-
-**Verified:**
-
-WordPress website loaded correctly
-
-Multiple ECS backend servers serving requests via ELB
-
-<img width="722" height="768" alt="image" src="https://github.com/user-attachments/assets/8b01b2a0-f853-4f5b-b34f-8506e5404054" />
-
-# Monitoring with Cloud Eye
-
-**Navigated to Cloud Eye for:**
-
-Resource monitoring overview
-
-Alarm statistics
-
-ECS-level metrics
-
-Reviewed:
-
-Alarm history
-
-ECS CPU and memory usage
-
-Scaling events triggered by policies
-
-<img width="720" height="432" alt="image" src="https://github.com/user-attachments/assets/f7f6f498-8b34-4e07-9c8b-f0dc109afc60" />
-
-<img width="720" height="222" alt="image" src="https://github.com/user-attachments/assets/306557ca-cf8f-46a2-9178-5484a60a2d91" />
-
-<img width="722" height="342" alt="image" src="https://github.com/user-attachments/assets/0d797e3b-130a-4916-9b44-de10fe8131dc" />
-
+## 5.2 Monitoring Resources via Cloud Eye
+Huawei Cloud Eye was used to observe ECS and RDS metrics such as CPU usage, memory utilization, and network traffic. Alarm records and historical data were reviewed to verify the functioning of auto scaling policies. This tool helps ensure service reliability by enabling proactive monitoring and timely response to performance issues.
