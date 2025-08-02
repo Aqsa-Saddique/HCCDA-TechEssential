@@ -8,10 +8,12 @@ Before provisioning compute or storage services, it is essential to establish a 
 ## 1.1 Deploying a Virtual Private Cloud (VPC)
 A VPC was deployed in the AP-Singapore region to serve as the foundation for all subsequent resources. The creation process automatically generated an associated subnet, enabling internal communication and routing within the cloud infrastructure.
 
+<img width="563" height="111" alt="image" src="https://github.com/user-attachments/assets/3fdc7670-1a90-4c8e-a4ce-254fd4018812" />
+
 ## 1.2 Defining Security Group Rules
 A custom Security Group was configured with an inbound rule allowing full access from IP range 0.0.0.0/0. This open configuration is suitable for testing and demonstration purposes but should be restricted to specific IPs in production for enhanced security.
 
-
+<img width="722" height="502" alt="image" src="https://github.com/user-attachments/assets/7a7f54ad-a726-4d5f-9fea-f834be0d39af" />
 
 # 2. Provisioning Compute and Database Services
 With the network environment in place, the next step involves provisioning compute and database resources. Huawei Cloud’s ECS service is used to deploy a Linux-based web server, while the RDS service is used to provision a highly available, managed MySQL database instance. Both components are assigned to the previously configured VPC for seamless communication.
@@ -32,6 +34,8 @@ Network: VPC-integrated with associated security group
 Elastic IP (EIP): Automatically allocated
 
 This instance serves as the primary web node for hosting the LAMP stack and WordPress.
+
+<img width="720" height="54" alt="image" src="https://github.com/user-attachments/assets/9fab31a6-7fb1-4d56-8326-f3140a0272cb" />
 
 ## 2.2 Provisioning the RDS Instance for Data Management
 A managed MySQL RDS instance was deployed to serve as the backend database. Key configurations included:
@@ -93,3 +97,10 @@ The WordPress homepage was accessed using the public IP of the ELB. Successful p
 
 ## 5.2 Monitoring Resources via Cloud Eye
 Huawei Cloud Eye was used to observe ECS and RDS metrics such as CPU usage, memory utilization, and network traffic. Alarm records and historical data were reviewed to verify the functioning of auto scaling policies. This tool helps ensure service reliability by enabling proactive monitoring and timely response to performance issues.
+
+<img width="720" height="133" alt="image" src="https://github.com/user-attachments/assets/f35d4958-609b-4d40-805f-e5e21ba7271a" />
+
+<img width="722" height="342" alt="image" src="https://github.com/user-attachments/assets/cc0eba36-c1c4-4ce0-b227-a41299615b86" />
+
+
+
