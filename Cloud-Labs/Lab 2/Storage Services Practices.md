@@ -80,6 +80,14 @@ After setting properties, the file system is mounted using an NFS mount command
 
 Verification shows the same file created from Linux is accessible on Windows
 
+<img width="720" height="194" alt="image" src="https://github.com/user-attachments/assets/9cd1d510-57b8-4310-ac3f-c83e3c173392" />
+
+<img width="720" height="336" alt="image" src="https://github.com/user-attachments/assets/75999b9f-7c88-4fa6-a93c-421a9936184b" />
+
+<img width="720" height="591" alt="image" src="https://github.com/user-attachments/assets/94afb61a-8a49-4c47-ba51-5c46d52bf5e9" />
+
+<img width="720" height="348" alt="image" src="https://github.com/user-attachments/assets/42aacd00-7c47-4ac5-8139-722624e52a87" />
+
 # Conclusion
 This lab demonstrated the practical usage of Huawei Cloud's storage services across various scenarios. EVS was used to provide persistent, block-level storage and verified across different ECS instances. OBS was used for object-based file storage and management. SFS provided shared file access between Linux and Windows systems. Together, these services offer powerful and flexible storage options to meet the growing demands of cloud applications.
 
