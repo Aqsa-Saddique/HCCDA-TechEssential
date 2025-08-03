@@ -145,9 +145,9 @@ ollama run deepseek-r1:1.5b
 
 <img width="624" height="52" alt="image" src="https://github.com/user-attachments/assets/f59eee53-e518-4e94-baa1-fa488858c231" />
 
-# 5. Final Notes
+# 5.Final notes
 You can now interact with the DeepSeek-R1 1.5B model in your terminal. If the responses seem inconsistent or context gets lost, type /bye to reset the model session.
 
-#Conclusion
+# Conclusion
 This lab demonstrated how to deploy a lightweight and private LLM setup using Ollama on Huawei Cloud ECS. You successfully created a virtual server, installed the Ollama runtime, and deployed the DeepSeek-R1 1.5B model using both GitHub and Huawei OBS options. This solution is cost-effective, self-contained, and ideal for rapid prototyping or private inference workflows.
   
